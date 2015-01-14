@@ -1,6 +1,11 @@
-# CitySDK Amsterdam webservices
+### CitySDK Amsterdam webservices
 
-## Boilerplate code
+####What:
+
+Services that are hosted here act as 'glue' between the LD API and external (mostly real-time) web services. The idea is that thr current data packet is provided, the code in the glue service uses this data for a request with the external service, and returns a new data packet, based on the old packet and the response from the external service.
+Results are ususally cached (using memcached) to reduce the number of external requests..
+
+#### Boilerplate code
 
     class CitySDK_Services < Sinatra::Base
      
