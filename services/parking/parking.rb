@@ -3,34 +3,34 @@
 #############################################################################################################
 
 class CitySDK_Services < Sinatra::Base
- 
-  PARKING_HOST = "http://www.trafficlink-online.nl"
-  PARKING_PATH = "/trafficlinkdata/wegdata/IDPA_ParkingLocation.GeoJSON"
+  PARKING_HOST = "http://opd.it-t.nl"
+  PARKING_PATH = "/data/amsterdam/ParkingLocation.json"
   PARKING_TIMEOUT = 5 * 60
-  
+ 
+
+# http://opd.it-t.nl/data/amsterdam/ParkingLocation.json
+ 
   #PARKING_MAPPING = JSON.parse(File.open(File.dirname(__FILE__) + '/mapping.json','r').read)
   
   # curl --data '{"id":"CE-P01 Sloterdijk"}' http://localhost:9292/parking  
   post '/parking' do
-
+    
     # Read data from request 
     json = self.parse_request_json
-    id = json["Name"]
-    
+    id = json["id"]
+   
     # TODO: naming convention!
     key = "parking!!#{id}"
     data = CitySDK_Services.memcache_get(key)
-    if not data
-    
+
+    if not data || data == {}
       connection = Faraday.new PARKING_HOST    
       response = httpget(connection, PARKING_PATH)
       if response.status == 200
         garages = JSON.parse response.body
-                
         garages["features"].each do |garage|
-          id = garage["Id"]          
+          id = garage["properties"]["Name"]          
           garage_key = "parking!!#{id}"
-          
           # Convert number in properties hash to integers
           garage["properties"]["FreeSpaceShort"] = garage["properties"]["FreeSpaceShort"].to_i
           garage["properties"]["FreeSpaceLong"] = garage["properties"]["FreeSpaceLong"].to_i
@@ -46,7 +46,6 @@ class CitySDK_Services < Sinatra::Base
       # Set key to empty hash, to prevent fetching URL next time again
       data = CitySDK_Services.memcache_get(key)
       if not data
-        CitySDK_Services.memcache_set(key, {}, PARKING_TIMEOUT)
         data = {}
       end      
     

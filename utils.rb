@@ -45,3 +45,9 @@ class CitySDK_Services < Sinatra::Base
   end
   
 end
+
+def jsonlog(o) # debugging
+  File.open("/var/www/_services/log/debug.log","a") do |fd|
+        fd.puts JSON.pretty_generate({ o.class.to_s => o })
+  end
+end
