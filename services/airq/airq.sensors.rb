@@ -39,7 +39,7 @@ class CitySDK_Services < Sinatra::Base
         end
       end
 
-      # If requested CitySDK node does not exist in parking API/mapping
+      # If requested CitySDK node does not exist in sensors
       # Set key to empty hash, to prevent fetching URL next time again
       data = CitySDK_Services.memcache_get(key)
       if not data
