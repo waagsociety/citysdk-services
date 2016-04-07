@@ -9,15 +9,16 @@ class CitySDK_Services < Sinatra::Base
   AIRQ_PATH = "/lastsensordata"
   AIRQ_TIMEOUT = 5 * 60
   AIRQ_KEYPREFIX = "airq.sensors"
-  AIRQ_LAT = :lat
-  AIRQ_LON = :lon
+  #AIRQ_LAT = :lat
+  #AIRQ_LON = :lon
 
   # curl --data '{"id":"CE-P01 Sloterdijk"}' http://localhost:9292/parking
   post '/airq' do
 
     # Read data from request
     json = self.parse_request_json
-    id = json[:id]
+    id = json['id']
+    jsonlog(json)
 
     # TODO: naming convention!
     key = "#{AIRQ_KEYPREFIX}!!#{id}"
@@ -29,10 +30,11 @@ class CitySDK_Services < Sinatra::Base
 
       if response.status == 200
         sensors = JSON.parse(response.body,symbolize_names: true)
+        jsonlog(sensors)
         sensors.each do |sensor|
           sensor_key = "#{AIRQ_KEYPREFIX}!!#{sensor[:id]}"
-          sensor.delete("#{AIRQ_LAT}")
-          sensor.delete("#{AIRQ_LON}")
+          #sensor.delete("#{AIRQ_LAT}")
+          #sensor.delete("#{AIRQ_LON}")
           # Convert number in properties hash to integers
           # TODO: get timeout from layer data
           CitySDK_Services.memcache_set(sensor_key, sensor, AIRQ_TIMEOUT)
