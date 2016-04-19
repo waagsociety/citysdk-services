@@ -7,7 +7,7 @@ class CitySDK_Services < Sinatra::Base
   AIRQ_HOST = "http://wg66.waag.org"
   AIRQ_PORT = "8090"
   AIRQ_PATH = "/lastsensordata"
-  AIRQ_TIMEOUT = 5 * 60
+  AIRQ_TIMEOUT = 5
   AIRQ_KEYPREFIX = "airq.sensors"
   #AIRQ_LAT = :lat
   #AIRQ_LON = :lon
